@@ -1,15 +1,21 @@
-function fillUSDHolidays() {
+function fillUSD() {
     const sheet = SpreadsheetApp.getActiveSheet();
     const data = sheet.getDataRange().getValues();
     
-    // Define holiday dates in MM/DD/YYYY format
-    const holidayDates = [
-        '07/04/2025', // Independence Day
-        '06/19/2025', // Juneteenth
-        '05/26/2025', // Memorial Day
-        '02/17/2025', // Presidents' Day
-        '01/20/2025', // Martin Luther King Jr. Day
-        '01/01/2025'  // New Year's Day
+    // Define CPI dates in MM/DD/YYYY format
+    const cpiDates = [
+        '12/10/2025',
+        '11/13/2025',
+        '10/15/2025',
+        '09/11/2025',
+        '08/12/2025',
+        '07/15/2025', // July CPI
+        '06/11/2025', // June CPI
+        '05/13/2025', // May CPI
+        '04/10/2025', // April CPI
+        '03/12/2025', // March CPI
+        '02/12/2025', // February CPI
+        '01/15/2025'  // January CPI
     ];
 
     // Find column indices
@@ -24,7 +30,8 @@ function fillUSDHolidays() {
     }
 
     // Process each row
-    let holidaysFound = 0;
+    let cpiFound = 0;
+    
     data.forEach((row, rowIndex) => {
         if (rowIndex === 0) return; // Skip header row
         
@@ -35,21 +42,22 @@ function fillUSDHolidays() {
         const date = new Date(rowDate);
         const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}/${date.getFullYear()}`;
         
-        // Only fill if date matches holiday list
-        if (holidayDates.includes(formattedDate)) {
-            const range = sheet.getRange(rowIndex + 1, usdColIndex + 1);
-            range.setValue('Holiday');
-            holidaysFound++;
+        const range = sheet.getRange(rowIndex + 1, usdColIndex + 1);
+        
+        // Check for CPI dates
+        if (cpiDates.includes(formattedDate)) {
+            range.setValue('CPI');
+            cpiFound++;
         }
     });
 
-    Logger.log(`Filled ${holidaysFound} USD holidays`);
+    Logger.log(`Filled ${cpiFound} CPI dates`);
 }
 
-// Update menu to show only USD holiday function
+// Update menu to show only USD function
 function onOpen() {
     const ui = SpreadsheetApp.getUi();
     ui.createMenu('Custom Actions')
-        .addItem('Fill USD Holidays', 'fillUSDHolidays')
+        .addItem('Fill USD CPI', 'fillUSD')
         .addToUi();
 }
